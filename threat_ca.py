@@ -20,9 +20,6 @@ class ThreatAgent(Agent):
         self.threat = threat
         self.is_happy = False
 
-    def update(self, board):
-        self.update_happiness(board)
-
     def update_threat(self, board):
         nbr_coords = board.get_neighbor_coords(self.pos)
         if nbr_coords:
@@ -138,14 +135,14 @@ class ThreatBoard(Board):
                 new_pos = (random.randint(0, self.width-1), random.randint(0, self.height-1))
                 if new_pos not in self or self[new_pos] is None:
                     agent.pos = new_pos
-                    agent.update(self)
+                    agent.update_happiness(self)
                     if agent.is_happy:
                         self[new_pos] = agent
                         did_move = True
                         break
             if did_move == False:
                 agent.pos = old_pos
-                agent.update(self)
+                agent.update_happiness(self)
                 self[old_pos] = agent
 
 n = 13
