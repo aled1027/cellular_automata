@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<p>The use of we is a formality I like. When really just means that I did it or think it.</p>
+<p>When I use the word racism here, you can substitute any of form of discrimination in and the statement still applies. I use racism because it's concrete and easier to explain.</p>
+<p>This blog post is a summary of a research paper I did on Schelling's Cellular Automata model. Before you decide now that you don't want to read this, I will go over ideas relating, but not limited, to: - cause and effects of racism - cause and effects of discrimination in general - the relationship between an individual and all of society - to what extent can an individual affect society</p>
+<p>First, let us begin by presenting cellular automata. Cellular Automata are a type of computer simulations that consists of a grid of cells, where each cell can be either on or off. It's easiest to picture an 8 by 8 checkerboard where each cell is either white or black (we generally think of a white cell as being dead and a black cell as being alive). Cellular Autaomta then assign rules to the cell. These rules govern whether the cell is going to be a live or dead next based on the compositions of its neighbors, the 8 blocks surrounding the cell.</p>
+<p>The most well known cellular automata is called Game of Life. The rules of Game of Life are simple: 1. Any live cell with fewer than two live neighbours dies, as if caused by under-population. 2. Any live cell with two or three live neighbours lives on to the next generation. 3. Any live cell with more than three live neighbours dies, as if by overcrowding. 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction (wikipedia)</p>
+<p>Game of Life is interesting because the rules give rise to really cool patterns. Given the right starting configuration of alive and dead cells, you can create oscillating patterns, patterns that move around the board, a pattern that acts as a gun (it shoots out live cells), and so forth. Combining these patterns, we can actually prove mathematically that a cellular automaton with the rules of Game of Life can do anything that a computer can do. It can perform any computation: sort a list, multiply numbers, and if it were hooked up to the internet, it could have the internet on it. Anything a computer can do, Game of Life can do. And vice versa.</p>
+<p>We can also use cellular automata to think about people and relations among people. Since we can simulate the cellular automata model on a computer, we can see how the people act given different rules. This is what Schelling did in the 1970s with discrimination.</p>
+<p>Schelling took an 8 by 8 grid (thinka checkboard) and randomly put dimes and pennies on it. He then said that if at least 1/3 of a given coin's neighbors are like themself (the same type coin), then that coin is happy; and otherwise the coin is sad. Then the rule is that one by one, we randomly pick a sad coin, and move them to the nearest empty cell such that they are happy. What we find is that eventually there is segregation. There are clusters of predominantly dimes, and clusters of predominantly pennies.</p>
+<p>Let us relate this model to society. We can think of the dimes as one group of people, and the pennies as a different group. For example, say the dimes are black people and the pennies are white people. Then, each race doesn't like to be surrounded by people that don't look the same as them. If a black person moves into a neighborhood where more than 2/3 of their neighbors are white, they are less comfortable (less happy) than if a white person lived in the same spot. Therefore that black has a tendency to move.</p>
+<p>What we then see is that because of this, perhaps natural, tendency to not want to be totally surrounded by people that different than us, we get segregation on the system level. Even if we hold all else equal - there is equal pay among the people, equal schools, equal opportunity, and no degradation of other races, no &quot;mean&quot; discimination - we simply say that people don't like it when more than 2/3 of the people around them are different, then we see segregation.</p>
+<p>This is huge. We're not saying that socioeconomic inequality, historical advantage, hiring preferences and other issues don't contribute to segregation and racism - they most certainly do - but perhaps at the core, there is something simpler happenning. We are each, not to our own fault, or to society's fault, slight racist. And when we are all slightly racist, then we get huge emergent segregation, and probably consequently racism, on the macro level.</p>
+<p>Most importantly, the amount of segregation on the macro level is not of the same degree or proportion as the racism on the micro level. If we are 33% racist on the micro level, then on the macro level we see approximatley 80% segregation. 80% segregation means that each person is similar to at least 4/5 neighbors - a much greater number than 1/3.</p>
+<p>So what should we make of this?</p>
+<p>We find the following ideas compelling.</p>
+<ol style="list-style-type: decimal">
+<li><p>Racism, and other forms of discrimination, are really hard to stop once they get doing. In the model, once there is a predominantly white neighborhood, all of those white people are happy. They have no impetus to move. In a sense, segregation is irreversible without new, incentives.</p></li>
+<li><p>Racism begins with the individuals. In Schelling's model, there is nothing about person being indoctrinated with racist attitudes, or a biased against those different than they are. And the amont of segregation and racism on the macro level has no effect on an individual's attitudes. The segregation in the model is purely the result of individual attitudes.</p></li>
+<li><p>Racism does not stem from inequality. Both races were equally racist, had equal income, were equal in all ways. And yet, we still observed segregatoin.</p></li>
+<li><p>Add more?</p></li>
+</ol>
+<p>TODO add link to the shapes page. TODO explain what the shapes page is doing wrong.</p>
+<p>TODO define the word agents</p>
+<p>So that was Schelling's paper. My research into Schelling's model was to look at how changing the movement procedure changed the results of the model. In Schelling's orginal model, the agents move to the nearest cell such that they are happy. This means that model is deterministic - agents always move to the same place. Also, it means that agents have a tendency to stay close to home.</p>
+<p>The problem with the model being deterministic is that it may not be modeling society that well. As behavioral economists and psychologists have shown, we are not the most rational people, so we may not move to the nearest place such that we are happy. Moreover, for some reason or another, we may want to move farther away sometimes.</p>
+<p>To change this problem, we had the unhappy agents take a random instead of moving directly to the nearest such that they are happy. A random walk is ... TODO define random and explain random walk</p>
+<p>TODO results of my model</p>
+<p>TODO changing preferences</p>
+<p>TODO changing the length of the random walk to model socioeconomic inequality</p>
+<p>For comparison, the shapes simulation above has agents move to random</p>
+</body>
+</html>
