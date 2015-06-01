@@ -22,6 +22,12 @@ In Schelling's model, these metrics are
 - average similarity (aka amount of segregation)
 - average happiness
 
+## General Problems
+- agents keep going to "every other" cell
+    like we a * * * type shape
+               * *
+
+
 ## Threat-Vuln Model
 1. There is 1 type of agent.
 2. Each agent has two real values assigned to it: agent.threat and agent.vuln
@@ -35,12 +41,13 @@ In Schelling's model, these metrics are
 The change of schelling's model is that in addition to being happy or sad based on their environment, agents also change how they affect the agents around them.
 Perhaps one way to think about it is that we are also updating the race of agents.
 
-## Supply-Demand model
+## Supply-Demand Model
 1. each agent has supply, demand, money
 2. agents sell and buy goods basd on this. 
 3. see what happens
 
 ## Power Model
+TODO in the model I made, I never finished the update_power method for the PowerAgent class.
 1. There is 1 type of agent.
 2. Each agent has `agent.power, agent.desired_power, agent.is_happy`
 3. ``
@@ -56,6 +63,14 @@ This is supposed to model power dynamics in society.
 Some people don't necessarily want to make a lot of decisions but others do.
 TODO add better explanation.
 
+## Influence Model
+1. There is 1 type of agent.
+2. Each agent has a `self.convinced` value
+3. We have agents change their self.convinved value nearer to those around them.
+
+This model examines conformity.
+How do different parameters affect conformity?
+
 ## Leaving the 2-d board
 One limitation of cellular automat is that you are stuck on a 2-dimensional board. 
 This isn't really reflective of the world, so maybe there's a way around it. 
@@ -67,3 +82,11 @@ The entry in the $i$th row and $j$th column would represent how "close" the $i$t
 The 2-d board is actually a special case of the Laplacian.
 Most of the entires are zero, but a particular few are 1s. 
 Each row and columns would have $8 1$s and the diagonal would be all $0$s.
+
+## Schelling with asymmetric edges
+Instead of agent0 being a neighbor of agent1 if and only if agent1 is a neighbor of agent0, let's have asymmetric edges.
+I.e. in the laplacian, we assign edges randomly.
+We make sure that the number of edges is the as it would be otherwise.
+
+By the way, by edge, I mean the agent considers the agent receiving the edge as a neighbor.
+I.e. Laplacian[i,j] = 1 if agents[i] considers agents[j] to be a neighbor - but not necessarily the opposite. 

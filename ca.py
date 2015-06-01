@@ -11,6 +11,7 @@ class Agent(object):
         rect = (self.pos[0] * self.radius, self.pos[1] * self.radius, self.radius, self.radius)
         pygame.draw.rect(surface, self.col, rect)
 
+# need to switch to an ordered dict
 class Board(dict):
     def __init__(self, width, height, state):
         dict.__init__(self, state)
