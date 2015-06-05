@@ -1,7 +1,8 @@
 import random
-import numpy as np
+from laplacian import Laplacian
+from scipy.stats import poisson
 
-pref_alike = 0.3
+pref_alike = 0.5
 
 class Agent(object):
     def __init__(self, race='black'):
@@ -25,7 +26,8 @@ class Agent(object):
             self.is_happy = False
 
 class Graph(list):
-    def __init__(self, num_agents=15, edge_threshold=0.33, agents=None, laplacian=None):
+    def __init__(self, num_agents=15, edge_threshold=0.33, moving_mu=0.5, agents=None, laplacian=None):
+        self.moving_mu = moving_mu
         if agents == None:
             agents = self.generate_agents(num_agents)
         list.__init__(self, agents)
@@ -37,7 +39,6 @@ class Graph(list):
 
         for agent in self:
             agent.graph = self
-         #self.update()
 
     def generate_agents(self, num_agents):
         """
@@ -57,14 +58,12 @@ class Graph(list):
         generates a random laplacian.
         """
         num_agents = len(self)
-        ret_lap = np.matrix(np.zeros(shape=(num_agents, num_agents)))
+        ret_lap = Laplacian(size=num_agents)
         for i in range(num_agents):
-            for j in range(num_agents):
-                if i == j:
-                    ret_lap[i,j] = 0
-                else:
-                    r = random.random()
-                    ret_lap[i,j] = 1 if r < edge_threshold else 0
+            sample = poisson(self.moving_mu).rvs(len(self)-1).tolist()
+            # insert value into diagonal entry
+            sample.insert(i, -1 * sum(sample))
+            ret_lap[i] = sample
         return ret_lap
 
     @property
@@ -75,21 +74,17 @@ class Graph(list):
 
     @property
     def num_edges(self):
-        return len(np.transpose(np.nonzero(self.laplacian)))
+        return self.laplacian.num_edges
 
     def get_neighbors(self, agent):
         """
         returns the neighbors of the agents.
         """
-        row_number = self.index(agent)
-        _, ys = self.laplacian[row_number].nonzero()
-
-        # take the zeroith element because for some reason the list is nested
-        return [self[y] for y in ys.tolist()[0]]
+        row = self.index(agent)
+        return [self[i] for i in self.laplacian.get_neighbor_indices(row=row)]
 
     def update(self):
-        # todo add self.move_someone
-        # self.move_someone()
+        self.move_someone()
         self.unhappy_agents = []
         for agent in self:
             agent.graph = self
@@ -99,17 +94,19 @@ class Graph(list):
 
     def move_someone(self):
         """
-        change someone's edges.
-        do we want to conserve the number of edges on some level?
-        I don't see exactly why we need to?
-        but in the 2-d model, edges are conserved
+        TODO document
         """
+        # determine the agent to move:
+        if not self.unhappy_agents:
+            return
+        agent = random.choice(self.unhappy_agents)
+        agent_idx = self.index(agent)
+        sample = poisson(self.moving_mu).rvs(len(self)-1).tolist()
+        # insert value into diagonal entry
+        sample.insert(agent_idx, -1 * sum(sample))
+        self.laplacian[agent_idx] = sample
 
 
-if __name__ == '__main__':
-    b = Graph(num_agents=5, edge_threshold=0.33)
-    print len(b), b.num_edges
-    l = b.laplacian
-    # b.update()
+
 
 
