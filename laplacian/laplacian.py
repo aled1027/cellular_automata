@@ -64,14 +64,9 @@ class Laplacian(Matrix):
 
     def get_neighbor_indices(self, row=0):
         ret_list = []
-        for i,entry in enumerate(self.row(row)):
+        for i, entry in enumerate(self.row(row)):
             if entry > 0:
-                ret_list.append(i)
+                ret_list.append((entry, i))
         return ret_list
-
-
-
-
-
 
 

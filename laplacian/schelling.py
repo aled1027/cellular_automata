@@ -15,7 +15,9 @@ class Agent(object):
             self.is_happy = False
             return
 
-        nbr_races = [nbr.race for nbr in nbrs]
+
+
+        nbr_races = [nbr.race for (edge_weight, nbr) in nbrs for _ in range(edge_weight)]
         nbr_dict = {race: nbr_races.count(race) for race in ['white', 'black']}
         ratio = float(nbr_dict[self.race]) / len(nbrs)
 
@@ -25,9 +27,9 @@ class Agent(object):
             self.is_happy = False
 
 class Graph(list):
-    def __init__(self, num_agents=15, moving_mu=0.5, agents=None, laplacian=None, pref_alike=0.5):
+    def __init__(self, num_agents=5, moving_mu=0.5, agents=None, laplacian=None, pref_alike=0.5):
 
-        self.pref_alike = pref_alike
+        self.pref_alike = 0.5
         self.moving_mu = moving_mu
         self.races = ['white', 'black']
         if agents == None:
@@ -74,7 +76,8 @@ class Graph(list):
         # similarity ratio = # your race / # total nbrs
         similarity = []
         for agent in self:
-            nbr_races = [nbr.race for nbr in self.get_neighbors(agent)]
+            nbrs = self.get_neighbors(agent)
+            nbr_races = [nbr.race for (edge_weight, nbr) in nbrs for _ in range(edge_weight)]
             nbr_dict = {race: nbr_races.count(race) for race in self.races}
             num_nbrs = sum(nbr_dict.values())
             if num_nbrs  == 0:
@@ -100,7 +103,7 @@ class Graph(list):
         returns the neighbors of the agents.
         """
         row = self.index(agent)
-        return [self[i] for i in self.laplacian.get_neighbor_indices(row=row)]
+        return [(entry, self[idx]) for (entry, idx) in self.laplacian.get_neighbor_indices(row=row)]
 
     def update(self):
         self.move_someone()
@@ -125,6 +128,7 @@ class Graph(list):
         self.laplacian[agent_idx] = sample
 
 
-
+if __name__ == '__main__':
+    g = Graph()
 
 

@@ -6,8 +6,6 @@ if __name__ == '__main__':
 
     with open(path, 'w') as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
-        # number of edges is consistently below the expected number
-        # must be a bug somewhere!!!
         moving_mu = 0.1
         num_agents = 1000
         pref_alike = 0.5
