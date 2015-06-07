@@ -2,7 +2,6 @@ import random
 from laplacian import Laplacian
 from scipy.stats import poisson
 
-pref_alike = 0.5
 
 class Agent(object):
     def __init__(self, race='black'):
@@ -20,20 +19,23 @@ class Agent(object):
         nbr_dict = {race: nbr_races.count(race) for race in ['white', 'black']}
         ratio = float(nbr_dict[self.race]) / len(nbrs)
 
-        if ratio > pref_alike:
+        if ratio > self.graph.pref_alike:
             self.is_happy = True
         else:
             self.is_happy = False
 
 class Graph(list):
-    def __init__(self, num_agents=15, edge_threshold=0.33, moving_mu=0.5, agents=None, laplacian=None):
+    def __init__(self, num_agents=15, moving_mu=0.5, agents=None, laplacian=None, pref_alike=0.5):
+
+        self.pref_alike = pref_alike
         self.moving_mu = moving_mu
+        self.races = ['white', 'black']
         if agents == None:
             agents = self.generate_agents(num_agents)
         list.__init__(self, agents)
 
         if laplacian == None:
-            self.laplacian = self.generate_laplacian(edge_threshold)
+            self.laplacian = self.generate_laplacian()
 
         self.unhappy_agents = []
 
@@ -53,7 +55,7 @@ class Graph(list):
                 li.append(Agent(race='black'))
         return li
 
-    def generate_laplacian(self, edge_threshold):
+    def generate_laplacian(self):
         """
         generates a random laplacian.
         """
@@ -65,6 +67,23 @@ class Graph(list):
             sample.insert(i, -1 * sum(sample))
             ret_lap[i] = sample
         return ret_lap
+
+    @property
+    def avg_similarity(self):
+        # calculates average similarity ratio
+        # similarity ratio = # your race / # total nbrs
+        similarity = []
+        for agent in self:
+            nbr_races = [nbr.race for nbr in self.get_neighbors(agent)]
+            nbr_dict = {race: nbr_races.count(race) for race in self.races}
+            num_nbrs = sum(nbr_dict.values())
+            if num_nbrs  == 0:
+                similarity.append(1)
+            else:
+                ratio = float(nbr_dict[agent.race]) / float(num_nbrs)
+                similarity.append(ratio)
+        average_similarity = float(sum(similarity)) / float(len(similarity))
+        return average_similarity
 
     @property
     def happiness_ratio(self):
@@ -96,7 +115,6 @@ class Graph(list):
         """
         TODO document
         """
-        # determine the agent to move:
         if not self.unhappy_agents:
             return
         agent = random.choice(self.unhappy_agents)
