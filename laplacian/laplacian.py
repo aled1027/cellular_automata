@@ -38,7 +38,10 @@ class Matrix(object):
             raise("pos is not of a valid type")
 
     def __repr__(self):
-        return repr(self.matrix)
+        s = ""
+        for l in self.matrix:
+            s = s + repr(l) + "\n"
+        return s
 
     def __str__(self):
         return str(self.matrix)
@@ -68,5 +71,28 @@ class Laplacian(Matrix):
             if entry > 0:
                 ret_list.append((entry, i))
         return ret_list
+
+    def symmetrize(self):
+        """
+        given the top right of the matrix is filled out, fill in the bottom left
+        with the appropriate symmetric entries
+        [a,b,c]    [a,b,c]
+        [0,e,f] -> [b,e,f]
+        [0,0,g]    [c,f,g]
+        """
+        size = len(self.matrix)
+        for i, row in enumerate(self.matrix):
+            for j in range(i,size):
+                self[j,i] = self[i,j]
+
+    def update_diagonals(self):
+        for idx, row in enumerate(self.matrix):
+            counter = 0
+            for i, entry in enumerate(row):
+                if idx != i and entry > 0:
+                    # if we are at the diagonal entry, don't count it.
+                    # if the entry is non-positive, don't count i
+                    counter += entry
+            row[idx] = -1 * counter
 
 

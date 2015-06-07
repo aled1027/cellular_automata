@@ -14,35 +14,33 @@ class Agent(object):
         if len(nbrs) == 0:
             self.is_happy = False
             return
-
-
-
         nbr_races = [nbr.race for (edge_weight, nbr) in nbrs for _ in range(edge_weight)]
         nbr_dict = {race: nbr_races.count(race) for race in ['white', 'black']}
         ratio = float(nbr_dict[self.race]) / len(nbrs)
-
         if ratio > self.graph.pref_alike:
             self.is_happy = True
         else:
             self.is_happy = False
 
 class Graph(list):
-    def __init__(self, num_agents=5, moving_mu=0.5, agents=None, laplacian=None, pref_alike=0.5):
-
+    def __init__(self, num_agents=5, moving_mu=0.5, agents=None, \
+            laplacian=None, pref_alike=0.7):
         self.pref_alike = 0.5
         self.moving_mu = moving_mu
         self.races = ['white', 'black']
         if agents == None:
             agents = self.generate_agents(num_agents)
         list.__init__(self, agents)
-
+        self.laplacian = Laplacian(size=len(self))
         if laplacian == None:
             self.laplacian = self.generate_laplacian()
-
         self.unhappy_agents = []
-
         for agent in self:
             agent.graph = self
+            agent.update_happiness()
+            if agent.is_happy == False:
+                self.unhappy_agents.append(agent)
+
 
     def generate_agents(self, num_agents):
         """
@@ -59,15 +57,18 @@ class Graph(list):
 
     def generate_laplacian(self):
         """
-        generates a random laplacian.
+        generates a random, symmetric laplacian.
         """
         num_agents = len(self)
-        ret_lap = Laplacian(size=num_agents)
+        li = []
         for i in range(num_agents):
-            sample = poisson(self.moving_mu).rvs(len(self)-1).tolist()
-            # insert value into diagonal entry
-            sample.insert(i, -1 * sum(sample))
-            ret_lap[i] = sample
+            sample = poisson(self.moving_mu).rvs(num_agents - i).tolist()
+            zeros = ([0]*i)
+            zeros.extend(sample)
+            li.append(zeros)
+        ret_lap = Laplacian(xs=li)
+        ret_lap.symmetrize()
+        ret_lap.update_diagonals()
         return ret_lap
 
     @property
@@ -116,7 +117,12 @@ class Graph(list):
 
     def move_someone(self):
         """
-        TODO document
+        Picks a random unhappy agent.
+        Then, we use a poisson distribution to sample (#agents - 1) values
+        By the nature of the poisson distribution, each of these values is independent
+        Then we save the sampled values as the weight edges for this agent.
+
+        Since the laplacian is symmetric, we also update other agents' inedges.
         """
         if not self.unhappy_agents:
             return
@@ -126,9 +132,11 @@ class Graph(list):
         # insert value into diagonal entry
         sample.insert(agent_idx, -1 * sum(sample))
         self.laplacian[agent_idx] = sample
-
+        self.laplacian[None, agent_idx] = sample
+        self.laplacian.update_diagonals()
 
 if __name__ == '__main__':
     g = Graph()
+    l = g.laplacian
 
 

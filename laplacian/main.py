@@ -13,11 +13,9 @@ if __name__ == '__main__':
 
         print ("num agents: %d" % len(b))
         exp_num_edges = moving_mu * num_agents * (num_agents - 1)
-        print ("expected number of edges: %d" % exp_num_edges)
-        print ("expected number of edges per agent: %d" % (exp_num_edges // num_agents))
 
         csvwriter.writerow(["iter", "num_edges", "avg_hap", "avg_sim"])
-        for i in range(300):
+        for i in range(100):
             if i % 25 == 0:
                 print (i)
             b.update()
