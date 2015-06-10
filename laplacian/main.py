@@ -5,9 +5,10 @@ if __name__ == '__main__':
     path = "data/data.csv"
 
     with open(path, 'w') as csvfile:
+        print("initializing...")
         csvwriter = csv.writer(csvfile, delimiter=',')
         moving_mu = 0.1
-        num_agents = 1000
+        num_agents = 1001
         pref_alike = 0.5
         b = Graph(num_agents=num_agents, moving_mu=moving_mu, pref_alike=pref_alike)
 
@@ -15,7 +16,8 @@ if __name__ == '__main__':
         exp_num_edges = moving_mu * num_agents * (num_agents - 1)
 
         csvwriter.writerow(["iter", "num_edges", "avg_hap", "avg_sim"])
-        for i in range(100):
+        print("starting loop...")
+        for i in range(150):
             if i % 25 == 0:
                 print (i)
             b.update()

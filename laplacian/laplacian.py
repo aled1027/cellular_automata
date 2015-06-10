@@ -35,6 +35,7 @@ class Matrix(object):
         elif isinstance(pos, int):
             return self.matrix[pos]
         else:
+            # todo, according to the error message, there's a better way to do this.
             raise("pos is not of a valid type")
 
     def __repr__(self):
@@ -86,6 +87,7 @@ class Laplacian(Matrix):
                 self[j,i] = self[i,j]
 
     def update_diagonals(self):
+        raise NotImplementedError('We dont use diagonals, so this function should never be called')
         for idx, row in enumerate(self.matrix):
             counter = 0
             for i, entry in enumerate(row):

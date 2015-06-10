@@ -9,14 +9,20 @@ class Agent(object):
         self.graph = None
         self.is_happy = False
 
-    def update_happiness(self):
-        nbrs = self.graph.get_neighbors(self)
-        if len(nbrs) == 0:
+    def update_happiness(self, nbr_dict=None):
+        num_nbrs = 0
+        if nbr_dict == None:
+            nbrs = self.graph.get_neighbors(self)
+            nbr_races = [nbr.race for (edge_weight, nbr) in nbrs for _ in range(edge_weight)]
+            nbr_dict = {race: nbr_races.count(race) for race in ['white', 'black']}
+            num_nbrs = len(nbrs)
+        else:
+            num_nbrs = sum(nbr_dict.values())
+
+        if num_nbrs == 0:
             self.is_happy = False
             return
-        nbr_races = [nbr.race for (edge_weight, nbr) in nbrs for _ in range(edge_weight)]
-        nbr_dict = {race: nbr_races.count(race) for race in ['white', 'black']}
-        ratio = float(nbr_dict[self.race]) / len(nbrs)
+        ratio = float(nbr_dict[self.race]) / num_nbrs
         if ratio > self.graph.pref_alike:
             self.is_happy = True
         else:
@@ -40,6 +46,7 @@ class Graph(list):
             agent.update_happiness()
             if agent.is_happy == False:
                 self.unhappy_agents.append(agent)
+        self.compute_avg_similarity()
 
 
     def generate_agents(self, num_agents):
@@ -68,11 +75,9 @@ class Graph(list):
             li.append(zeros)
         ret_lap = Laplacian(xs=li)
         ret_lap.symmetrize()
-        ret_lap.update_diagonals()
         return ret_lap
 
-    @property
-    def avg_similarity(self):
+    def compute_avg_similarity(self):
         # calculates average similarity ratio
         # similarity ratio = # your race / # total nbrs
         similarity = []
@@ -86,8 +91,8 @@ class Graph(list):
             else:
                 ratio = float(nbr_dict[agent.race]) / float(num_nbrs)
                 similarity.append(ratio)
-        average_similarity = float(sum(similarity)) / float(len(similarity))
-        return average_similarity
+        self.avg_similarity = float(sum(similarity)) / float(len(similarity))
+        return self.avg_similarity
 
     @property
     def happiness_ratio(self):
@@ -111,9 +116,25 @@ class Graph(list):
         self.unhappy_agents = []
         for agent in self:
             agent.graph = self
-            agent.update_happiness()
+
+            nbrs = self.get_neighbors(agent)
+            nbr_races = [nbr.race for (edge_weight, nbr) in nbrs for _ in range(edge_weight)]
+            nbr_dict = {race: nbr_races.count(race) for race in self.races}
+
+            agent.update_happiness(nbr_dict=nbr_dict)
+
             if agent.is_happy == False:
                 self.unhappy_agents.append(agent)
+
+            num_nbrs = sum(nbr_dict.values())
+            similarity = []
+            if num_nbrs  == 0:
+                similarity.append(1)
+            else:
+                ratio = float(nbr_dict[agent.race]) / float(num_nbrs)
+                similarity.append(ratio)
+
+            self.avg_similarity = float(sum(similarity)) / float(len(similarity))
 
     def move_someone(self):
         """
@@ -121,7 +142,6 @@ class Graph(list):
         Then, we use a poisson distribution to sample (#agents - 1) values
         By the nature of the poisson distribution, each of these values is independent
         Then we save the sampled values as the weight edges for this agent.
-
         Since the laplacian is symmetric, we also update other agents' inedges.
         """
         if not self.unhappy_agents:
@@ -131,9 +151,10 @@ class Graph(list):
         sample = poisson(self.moving_mu).rvs(len(self)-1).tolist()
         # insert value into diagonal entry
         sample.insert(agent_idx, -1 * sum(sample))
+        # update row
         self.laplacian[agent_idx] = sample
+        # update column
         self.laplacian[None, agent_idx] = sample
-        self.laplacian.update_diagonals()
 
 if __name__ == '__main__':
     g = Graph()
